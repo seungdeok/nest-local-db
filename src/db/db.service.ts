@@ -19,12 +19,31 @@ export class DbService<T> {
     this.db = new JsonDB(new Config(filePath, true, true, '/'));
   }
 
-  async getData(key: string): Promise<T> {
+  async save(key: string, data: T): Promise<void> {
+    await this.db.push(`/${key}`, data);
+    await this.db.save();
+  }
+
+  async findOne(key: string): Promise<T> {
     return this.db.getData(key);
   }
 
-  async save(key: string, data: T): Promise<void> {
+  async find(key: string): Promise<T[]> {
+    try {
+      const data = await this.db.getData(`/${key}`);
+      return Array.isArray(data) ? data : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  async updateOne(key: string, data: T): Promise<void> {
     await this.db.push(`/${key}`, data, true);
+    await this.db.save();
+  }
+
+  async deleteOne(key: string) {
+    await this.db.delete(`/${key}`);
     await this.db.save();
   }
 }
