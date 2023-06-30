@@ -1,9 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { UserEntity } from 'src/entities/user.entity';
 import { UserRequestDto } from './dto/user.request.dto';
+import { DbService } from 'src/db/db.service';
 
 @Injectable()
 export class UsersService {
+  constructor(
+    @Inject(UserEntity.name)
+    private readonly userDbService: DbService<UserEntity>,
+  ) {}
+
   private users: UserEntity[] = [];
 
   getAllUsers(): UserEntity[] {
